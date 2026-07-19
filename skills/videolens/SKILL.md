@@ -48,6 +48,11 @@ tags: [video, analysis, ai, douyin, tiktok, youtube, bilibili, media, ocr, trans
 
 调用 `scripts/validate_env.sh` 检查必需环境变量、`uv` / `videolens` 二进制、Whisper 模型目录是否就绪。
 
+**配置方式（二选一）：**
+
+- **方式 A（推荐）**：在仓库根目录创建 `.env` 文件（`cp .env.example .env` 后填入实际值），`validate_env.sh` / `analyze.sh` / `install.sh` 会自动加载
+- **方式 B**：在 shell 中 `export` 环境变量（向后兼容）
+
 **必需环境变量：**
 
 | 变量 | 说明 | 示例值 |
@@ -168,12 +173,25 @@ bash install.sh
 安装脚本会：
 
 1. 检测 Python ≥ 3.12 与 `uv`
-2. 执行 `uv sync --extra capture --extra mcp` 安装 SDK 依赖
-3. 执行 `uv run playwright install chromium` 下载浏览器二进制（用于抖音捕获）
-4. 复制技能目录到 Trae IDE / Hermes Agent / Anthropic 通用三生态目标路径
-5. 校验 `videolens version` 可执行（typer 子命令模式）
+2. 自动加载 `.env` 配置文件（若存在）
+3. 执行 `uv sync --extra capture --extra mcp` 安装 SDK 依赖
+4. 执行 `uv run playwright install chromium` 下载浏览器二进制（用于抖音捕获）
+5. 复制技能目录到 Trae IDE / Hermes Agent / Anthropic 通用三生态目标路径
+6. 校验 `videolens version` 可执行（typer 子命令模式）
 
 卸载执行 `uninstall.sh`。
+
+### 配置 API Key
+
+```bash
+# 复制配置模板
+cp .env.example .env
+
+# 编辑 .env 填入实际值
+vi .env
+```
+
+`.env` 文件已被 `.gitignore` 忽略，不会被提交到 git。
 
 ## Prompt 模板
 
