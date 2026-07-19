@@ -12,6 +12,17 @@ cd "$SCRIPT_DIR"
 SKILL_NAME="videolens"
 SKILL_SRC="$SCRIPT_DIR/skills/$SKILL_NAME"
 
+# === 加载 .env 配置文件（如果存在） ===
+# .env 文件由用户基于 .env.example 创建，包含 API key 等敏感信息
+# .env 已被 .gitignore 忽略，不会被提交
+if [[ -f "$SCRIPT_DIR/.env" ]]; then
+  # shellcheck disable=SC1091
+  set -a
+  source "$SCRIPT_DIR/.env"
+  set +a
+  echo "  已加载 .env 配置文件"
+fi
+
 echo "=== VideoLens Skill 安装开始 ==="
 echo "仓库根目录：$SCRIPT_DIR"
 echo ""
@@ -140,7 +151,7 @@ echo ""
 echo "=== 安装完成 ==="
 echo ""
 echo "下一步："
-echo "  1. 设置环境变量（参考 skills/$SKILL_NAME/SKILL.md）"
+echo "  1. 设置环境变量（参考 skills/$SKILL_NAME/SKILL.md 或 .env.example）"
 echo "  2. 运行分析：bash skills/$SKILL_NAME/scripts/analyze.sh /path/to/video.mp4"
 echo "  3. 或直接调用：videolens analyze /path/to/video.mp4 --prompt '...' --mode general"
 echo ""

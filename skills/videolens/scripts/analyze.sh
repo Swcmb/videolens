@@ -9,6 +9,16 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SKILL_DIR="$(dirname "$SCRIPT_DIR")"
 
+# === 自动加载仓库根目录的 .env 配置文件 ===
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+ENV_FILE="$REPO_ROOT/.env"
+if [[ -f "$ENV_FILE" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "$ENV_FILE"
+  set +a
+fi
+
 # 默认参数
 VIDEO_SOURCE=""
 MODE="general"

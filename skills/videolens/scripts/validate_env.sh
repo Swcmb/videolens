@@ -3,8 +3,26 @@
 # 检查必需环境变量、关键二进制、Whisper 模型目录
 # 用法：validate_env.sh
 # 退出码：0 全部就绪 / 1 缺失项
+#
+# 自动加载顺序（找到第一个即停止）：
+#   1. 仓库根目录的 .env 文件（推荐：cp .env.example .env 后填入实际值）
+#   2. 当前 shell 已 export 的环境变量（向后兼容）
 
 set -euo pipefail
+
+# === 自动加载 .env 配置文件 ===
+# 定位仓库根目录（脚本位于 skills/videolens/scripts/）
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+ENV_FILE="$REPO_ROOT/.env"
+
+if [[ -f "$ENV_FILE" ]]; then
+  # 仅当变量未在当前 shell 设置时才加载 .env 中的值（不覆盖现有环境变量）
+  set -a
+  # shellcheck disable=SC1090
+  source "$ENV_FILE"
+  set +a
+fi
 
 MISSING=()
 
@@ -45,11 +63,11 @@ if [[ -n "${VIDEOLENS_WHISPER_DIR:-}" ]]; then
   if [[ ! -d "$VIDEOLENS_WHISPER_DIR" ]]; then
     MISSING+=("WHISPER_DIR_NOT_FOUND")
     echo "Whisper 目录不存在：$VIDEOLENS_WHISPER_DIR" >&2
-    echo "  请参考 references/whisper-setup.md 下载模型" >&2
+    echo "  请参考 $SCRIPT_DIR/../references/whisper-setup.md 下载模型" >&2
   elif [[ -z "$(ls -A "$VIDEOLENS_WHISPER_DIR" 2>/dev/null)" ]]; then
     MISSING+=("WHISPER_DIR_EMPTY")
     echo "Whisper 目录为空：$VIDEOLENS_WHISPER_DIR" >&2
-    echo "  请参考 references/whisper-setup.md 下载模型文件" >&2
+    echo "  请参考 $SCRIPT_DIR/../references/whisper-setup.md 下载模型文件" >&2
   fi
 fi
 
