@@ -46,7 +46,12 @@ tags: [video, analysis, ai, douyin, tiktok, youtube, bilibili, media, ocr, trans
 
 ### 1. 环境校验
 
-调用 `scripts/validate_env.sh` 检查必需环境变量、`uv` / `videolens` 二进制、Whisper 模型目录是否就绪。
+调用 `skills/videolens/scripts/validate_env.sh` 检查必需环境变量、`uv` / `videolens` 二进制、Whisper 模型目录是否就绪。
+
+**配置方式（二选一）：**
+
+- **方式 A（推荐）**：在仓库根目录创建 `.env` 文件（`cp .env.example .env` 后填入实际值），`validate_env.sh` / `analyze.sh` / `install.sh` 会自动加载
+- **方式 B**：在 shell 中 `export` 环境变量（向后兼容）
 
 **必需环境变量：**
 
@@ -60,14 +65,14 @@ tags: [video, analysis, ai, douyin, tiktok, youtube, bilibili, media, ocr, trans
 
 ### 2. 视频获取
 
-- 抖音链接 → 通过 Playwright 浏览器访问页面，从 `aweme/v1/web/aweme/detail/` API 提取视频直链 → 用 `curl -L` 下载（详见 `references/douyin-extraction.md`）
+- 抖音链接 → 通过 Playwright 浏览器访问页面，从 `aweme/v1/web/aweme/detail/` API 提取视频直链 → 用 `curl -L` 下载（详见 `skills/videolens/references/douyin-extraction.md`）
 - YouTube / B站 / TikTok → 通过 `yt-dlp` 下载（已内置在 VideoLens venv）
 - 直链 → 直接下载
 - 本地文件 → 直接使用
 
 ### 3. 分析执行
 
-调用 `scripts/analyze.sh`，后台运行 `videolens analyze`：
+调用 `skills/videolens/scripts/analyze.sh`，后台运行 `videolens analyze`：
 
 ```bash
 videolens analyze /tmp/video_xxx.mp4 \
@@ -88,7 +93,7 @@ videolens analyze /tmp/video_xxx.mp4 \
 | 强制重分析 | `--force` | false | 跳过缓存 |
 | 仅 JSON 输出 | `--json` | false | 跳过 markdown |
 
-**帧数自适应规则**（短视频避免重复抽取，由 `scripts/adaptive_frames.sh` 实现）：
+**帧数自适应规则**（短视频避免重复抽取，由 `skills/videolens/scripts/adaptive_frames.sh` 实现）：
 
 | 视频时长 | `--max-frames` | `--frame-interval` |
 |---------|---------------|-------------------|
@@ -117,7 +122,7 @@ videolens analyze /tmp/video_xxx.mp4 \
 - 下载地址在 `aweme_detail.video.play_addr.url_list[0]` 或 `video.download_addr.url_list[0]`
 - 下载时需添加 `-H "Referer: https://www.douyin.com/"` 和 `-A "Mozilla/5.0..."` 防反爬
 - 视频 URL 有时效性，解析后尽快下载
-- 详见 `references/douyin-extraction.md`
+- 详见 `skills/videolens/references/douyin-extraction.md`
 
 ### 国内网络限制
 
@@ -125,7 +130,7 @@ videolens analyze /tmp/video_xxx.mp4 \
 - 本地 whisper 模型已预下载到 `/home/admin/.cache/whisper/tiny/`
 - 需设置 `VIDEOLENS_WHISPER_DIR` 环境变量指向该目录
 - `faster-whisper` 加载模型时**必须使用绝对路径**而非 `"tiny"`（否则会尝试联网下载）
-- 详见 `references/whisper-setup.md`
+- 详见 `skills/videolens/references/whisper-setup.md`
 
 ### 商汤 API 注意事项
 
@@ -142,7 +147,7 @@ videolens analyze /tmp/video_xxx.mp4 \
 
 ### YouTube / B站下载
 
-- 详见 `references/youtube-bilibili.md`
+- 详见 `skills/videolens/references/youtube-bilibili.md`
 
 ## 快速测试命令
 
@@ -168,13 +173,26 @@ bash install.sh
 安装脚本会：
 
 1. 检测 Python ≥ 3.12 与 `uv`
-2. 执行 `uv sync --extra capture --extra mcp` 安装 SDK 依赖
-3. 执行 `uv run playwright install chromium` 下载浏览器二进制（用于抖音捕获）
-4. 复制技能目录到 Trae IDE / Hermes Agent / Anthropic 通用三生态目标路径
-5. 校验 `videolens version` 可执行（typer 子命令模式）
+2. 自动加载 `.env` 配置文件（若存在）
+3. 执行 `uv sync --extra capture --extra mcp` 安装 SDK 依赖
+4. 执行 `uv run playwright install chromium` 下载浏览器二进制（用于抖音捕获）
+5. 复制技能目录到 Trae IDE / Hermes Agent / Anthropic 通用三生态目标路径
+6. 校验 `videolens version` 可执行（typer 子命令模式）
 
 卸载执行 `uninstall.sh`。
 
+### 配置 API Key
+
+```bash
+# 复制配置模板
+cp .env.example .env
+
+# 编辑 .env 填入实际值
+vi .env
+```
+
+`.env` 文件已被 `.gitignore` 忽略，不会被提交到 git。
+
 ## Prompt 模板
 
-9 种分析模式的 prompt 模板详见 `assets/prompt-templates.md`。
+9 种分析模式的 prompt 模板详见 `skills/videolens/assets/prompt-templates.md`。

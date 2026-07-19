@@ -27,3 +27,12 @@ Thumbs.db
 
 # UV
 uv.lock
+
+# 环境变量配置文件（含 API key 等敏感信息，禁止提交）
+.env
+.env.local
+.env.*.local
+
+# 临时分析结果
+/tmp/videolens_*/
+output/

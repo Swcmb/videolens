@@ -62,6 +62,17 @@ bash install.sh
 
 ### 2. 配置环境变量
 
+**方式 A（推荐）：使用 .env 配置文件**
+
+```bash
+cp .env.example .env
+vi .env  # 填入实际值
+```
+
+`.env` 文件已被 `.gitignore` 忽略，不会被提交。`install.sh` / `validate_env.sh` / `analyze.sh` 会自动加载。
+
+**方式 B：直接 export 环境变量**
+
 ```bash
 export OPENAI_API_KEY="sk-xxx"
 export OPENAI_BASE_URL="https://token.sensenova.cn/v1"
