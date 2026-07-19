@@ -1,9 +1,5 @@
 from __future__ import annotations
 
-import os
-import subprocess
-import sys
-from importlib.util import find_spec
 from pathlib import Path
 
 import typer
@@ -28,35 +24,6 @@ console = Console()
 def version() -> None:
     """Show version."""
     console.print(f"videolens {__version__}")
-
-
-@app.command()
-def ui(
-    port: int | None = typer.Option(
-        None,
-        "--port",
-        help="Port to run the web UI on. Defaults to PORT or 8501.",
-    ),
-    host: str = typer.Option("localhost", "--host", help="Host interface for the web UI."),
-    open_browser: bool = typer.Option(True, "--open/--no-open", help="Auto-open browser."),
-) -> None:
-    """Launch the local web UI (Streamlit)."""
-    if find_spec("streamlit") is None:
-        console.print("[red]Streamlit is not installed.[/red]")
-        console.print("Install the UI dependencies with: [bold]uv sync --extra ui[/bold]")
-        raise typer.Exit(code=1)
-
-    effective_port = port or int(os.environ.get("PORT", "8501"))
-    app_path = Path(__file__).parent / "web" / "app.py"
-    cmd = [
-        sys.executable, "-m", "streamlit", "run", str(app_path),
-        "--server.address", host,
-        "--server.port", str(effective_port),
-        "--server.headless", "true" if not open_browser else "false",
-        "--browser.gatherUsageStats", "false",
-    ]
-    console.print(f"[bold]Launching VideoLens UI:[/bold] http://{host}:{effective_port}")
-    subprocess.run(cmd, check=False)
 
 
 @app.command()

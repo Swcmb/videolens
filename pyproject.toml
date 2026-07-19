@@ -1,7 +1,7 @@
 [project]
 name = "videolens"
 version = "0.1.0"
-description = "Universal video intelligence — prompt-directed analysis of video sources for AI agents"
+description = "VideoLens Skill 仓库 — 通用视频智能分析技能（Hermes / Trae / Anthropic 三生态兼容）"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
@@ -9,17 +9,16 @@ requires-python = ">=3.12"
 authors = [
     { name = "Jeramy Ratelle", email = "ratelle.ja@gmail.com" }
 ]
-keywords = ["video", "transcription", "ocr", "openai", "ai-agents", "mcp", "video-intelligence", "streamlit"]
+keywords = ["video", "transcription", "ocr", "openai", "ai-agents", "mcp", "video-intelligence", "skill"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Topic :: Multimedia :: Video",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Scientific :: Engineering :: Artificial Intelligence",
 ]
 dependencies = [
-    "fastapi>=0.115.0",
     "typer>=0.15.0",
     "pydantic>=2.9.0",
     "openai>=1.55.0",
@@ -30,12 +29,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-ui = [
-    "streamlit>=1.40.0",
-    "pandas>=2.2.0",
-    "markdown>=3.7",
-    "weasyprint>=63.0",
-]
 mcp = [
     "mcp>=1.0.0",
 ]
@@ -60,12 +53,8 @@ build-backend = "uv_build"
 dev = [
     "pytest>=8.3.0",
     "ruff>=0.8.0",
-    "videolens[ui]",
 ]
 
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-
-[tool.vercel]
-entrypoint = "app:app"
